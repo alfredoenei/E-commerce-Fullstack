@@ -75,6 +75,78 @@ const seed = async () => {
                 imageUrl: "/products/camiseta-boca-120.jpg",
                 countInStock: 30,
                 category: "Camisetas"
+            },
+            {
+                user: userId,
+                name: "Camiseta Argentina 3 Estrellas",
+                description: "Camiseta oficial Campeones del Mundo 2022. La tercera estrella.",
+                price: 130, // Euros
+                imageUrl: "/products/camiseta-argentina-3-estrellas.jpg",
+                countInStock: 100,
+                category: "Camisetas"
+            },
+            {
+                user: userId,
+                name: "Camiseta España",
+                description: "Camiseta oficial de la Selección Española. La Furia Roja.",
+                price: 110,
+                imageUrl: "/products/camiseta-espana.jpg",
+                countInStock: 80,
+                category: "Camisetas"
+            },
+            {
+                user: userId,
+                name: "Camiseta Francia",
+                description: "Camiseta oficial de la Selección de Francia. Les Bleus.",
+                price: 120,
+                imageUrl: "/products/camiseta-francia.jpg",
+                countInStock: 90,
+                category: "Camisetas"
+            },
+            {
+                user: userId,
+                name: "Botines Nike Total 90",
+                description: "Botines clásicos Nike Total 90. Potencia y precisión.",
+                price: 150,
+                imageUrl: "/products/botines-nike-total90.jpg",
+                countInStock: 20,
+                category: "Botines"
+            },
+            {
+                user: userId,
+                name: "Botines Adidas F50",
+                description: "Botines Adidas F50 Adizero. Velocidad pura.",
+                price: 160,
+                imageUrl: "/products/botines-adidas-f50.jpg",
+                countInStock: 25,
+                category: "Botines"
+            },
+            {
+                user: userId,
+                name: "Camiseta Cork City Guinness",
+                description: "Camiseta retro Cork City FC con sponsor Guinness.",
+                price: 90,
+                imageUrl: "/products/camiseta-cork-city-guinness.jpg",
+                countInStock: 40,
+                category: "Camisetas"
+            },
+            {
+                user: userId,
+                name: "Camiseta Irlanda Opel",
+                description: "Camiseta clásica de Irlanda con sponsor Opel.",
+                price: 85,
+                imageUrl: "/products/camiseta-irlanda-opel.jpg",
+                countInStock: 45,
+                category: "Camisetas"
+            },
+            {
+                user: userId,
+                name: "Botines Puma Borussia",
+                description: "Botines Puma Borussia. Estilo clásico y durabilidad.",
+                price: 110,
+                imageUrl: "/products/botines-puma-borussia.jpg",
+                countInStock: 30,
+                category: "Botines"
             }
         ];
 

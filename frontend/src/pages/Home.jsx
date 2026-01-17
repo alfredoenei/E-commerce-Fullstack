@@ -2,9 +2,13 @@ import { useEffect, useState } from 'react';
 import ProductCard from '../features/products/ProductCard';
 import api from '../services/api';
 import { Link } from 'react-router-dom';
+import ShippingModal from '../components/modals/ShippingModal';
+import ContactModal from '../components/modals/ContactModal';
 
 const Home = () => {
     const [products, setProducts] = useState([]);
+    const [showShippingModal, setShowShippingModal] = useState(false);
+    const [showContactModal, setShowContactModal] = useState(false);
 
     useEffect(() => {
         // Fetch products for "Featured" section
@@ -41,7 +45,7 @@ const Home = () => {
                                             <Link to="/products" className="btn btn-warning btn-lg rounded-pill px-5 py-3 fw-bold text-uppercase shadow-lg hover-scale">
                                                 Ver Catálogo
                                             </Link>
-                                            <button className="btn btn-outline-light btn-lg rounded-pill px-5 py-3 fw-bold text-uppercase hover-scale">
+                                            <button onClick={() => setShowContactModal(true)} className="btn btn-outline-light btn-lg rounded-pill px-5 py-3 fw-bold text-uppercase hover-scale">
                                                 Más Información
                                             </button>
                                         </div>
@@ -60,7 +64,7 @@ const Home = () => {
                                 </span>
                                 <h2 className="display-3 fw-bold mb-3">Envíos Gratis</h2>
                                 <p className="lead fs-3 opacity-90">En tu primera compra superando los €100</p>
-                                <button className="btn btn-outline-light rounded-pill px-5 mt-3 fw-bold text-uppercase">Más Detalles</button>
+                                <button onClick={() => setShowShippingModal(true)} className="btn btn-outline-light rounded-pill px-5 mt-3 fw-bold text-uppercase">Más Detalles</button>
                             </div>
                         </div>
                     </div>
@@ -98,7 +102,7 @@ const Home = () => {
                 </div>
 
                 {/* Featured Products */}
-                <div className="d-flex justify-content-between align-items-end mb-4">
+                <div id="featured-products" className="d-flex justify-content-between align-items-end mb-4">
                     <div>
                         <h3 className="h2 fw-bold mb-1">Tendencias</h3>
                         <p className="text-muted mb-0">Lo más buscado por los hinchas esta semana</p>
@@ -124,8 +128,8 @@ const Home = () => {
                     )}
                 </div>
 
-                {/* Categories Banner */}
-
+                <ShippingModal show={showShippingModal} onClose={() => setShowShippingModal(false)} />
+                <ContactModal show={showContactModal} onClose={() => setShowContactModal(false)} />
             </div>
         </div>
     );
