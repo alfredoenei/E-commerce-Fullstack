@@ -13,10 +13,39 @@ export default function Checkout() {
   const { user } = useAuth();
   const navigate = useNavigate();
 
+  // Estados para manejar los datos del formulario de envío
+  // Es importante tener un estado para cada campo que el usuario va a completar
+  const [shippingData, setShippingData] = useState({
+    address: "",
+    city: "",
+    postalCode: "",
+    country: ""
+  });
+
+  // Estados para simular los datos de pago
+  // En una aplicación real, estos datos sensibles se manejan con cuidado (ej. Stripe Elements)
+  const [paymentData, setPaymentData] = useState({
+    cardNumber: "",
+    expiry: "",
+    cvc: "",
+    cardHolder: ""
+  });
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const handlePay = async () => {
+  // Manejador genérico para cambios en los inputs de envío
+  const handleShippingChange = (e) => {
+    setShippingData({ ...shippingData, [e.target.name]: e.target.value });
+  };
+
+  // Manejador genérico para cambios en los inputs de pago
+  const handlePaymentChange = (e) => {
+    setPaymentData({ ...paymentData, [e.target.name]: e.target.value });
+  };
+
+  const handlePay = async (e) => {
+    e.preventDefault(); // Prevenimos el recargo de la página al enviar el form
     setError("");
     setLoading(true);
 
@@ -26,8 +55,19 @@ export default function Checkout() {
       return;
     }
 
+    // Validación simple: verificamos que los campos obligatorios no estén vacíos
+    if (!shippingData.address || !shippingData.city || !paymentData.cardNumber) {
+      setError("Por favor completa todos los campos de envío y pago.");
+      setLoading(false);
+      return;
+    }
+
     try {
-      // Map cart items to backend OrderItem schema
+      // Simulamos una demora de red para dar feedback visual al usuario (loading spinner)
+      // Esto mejora la experiencia de usuario (UX)
+      await new Promise(resolve => setTimeout(resolve, 1500));
+
+      // Mapeamos los items del carrito al formato que espera el backend
       const orderItems = cartItems.map((p) => ({
         name: p.name,
         qty: p.quantity,
@@ -36,23 +76,19 @@ export default function Checkout() {
         product: p._id,
       }));
 
-      // Create Order in Database
+      // Enviamos la orden al backend
+      // Notar que enviamos la dirección real ingresada por el usuario
       await api.post('/orders', {
         orderItems,
-        paymentMethod: 'Stripe (Simulated)',
+        paymentMethod: 'Tarjeta Crédito (Simulada)',
         itemsPrice: cartTotal,
         taxPrice: 0,
         shippingPrice: 0,
         totalPrice: cartTotal,
-        shippingAddress: {
-          address: 'Calle Falsa 123',
-          city: 'Springfield',
-          postalCode: '12345',
-          country: 'USA'
-        }
+        shippingAddress: shippingData // Usamos los datos del estado
       });
 
-      // Clear Cart and Redirect
+      // Limpiamos el carrito y redirigimos a la página de éxito
       clearCart();
       navigate('/success');
 
@@ -78,46 +114,158 @@ export default function Checkout() {
     <div className="container py-5">
       <div className="row g-5">
 
-        {/* Left Column: Form / Action */}
+        {/* Columna Izquierda: Formulario de Checkout */}
         <div className="col-lg-7">
           <div className="card shadow-sm border-0 rounded-4">
             <div className="card-body p-5">
               <div className="d-flex align-items-center gap-3 mb-4">
                 <div className="bg-primary bg-opacity-10 p-3 rounded-circle text-primary">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" className="bi bi-credit-card" viewBox="0 0 16 16">
-                    <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4zm2-1a1 1 0 0 0-1 1v1h14V4a1 1 0 0 0-1-1H2zm13 4H1v5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V7z" />
-                    <path d="M2 10a1 1 0 0 1 1-1h1a1 1 0 0 1 1 1v1a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1v-1z" />
-                  </svg>
+                  <i className="bi bi-credit-card-2-front fs-3"></i>
                 </div>
-                <h1 className="fw-bold m-0">Checkout</h1>
-              </div>
-
-              <h2 className="h5 mb-3 text-muted">Completa tu compra</h2>
-              <div className="alert alert-info border-0 d-flex align-items-center gap-2">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" className="bi bi-info-circle-fill" viewBox="0 0 16 16">
-                  <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z" />
-                </svg>
-                <span>Modo Test: Se creará una orden en la base de datos.</span>
+                <h1 className="fw-bold m-0">Finalizar Compra</h1>
               </div>
 
               {error && <div className="alert alert-danger">{error}</div>}
 
-              <button
-                className="btn btn-primary btn-lg w-100 rounded-pill mt-4 fw-bold py-3 shadow-sm transition-all"
-                onClick={handlePay}
-                disabled={loading}
-              >
-                {loading ? (
-                  <span>Wait...</span>
-                ) : (
-                  `Pagar ${formatEUR(cartTotal)}`
-                )}
-              </button>
+              <form onSubmit={handlePay}>
+                {/* Sección: Datos de Envío */}
+                <h4 className="mb-3 text-secondary">
+                  <i className="bi bi-geo-alt me-2"></i>Dirección de Envío
+                </h4>
+                <div className="row g-3 mb-4">
+                  <div className="col-12">
+                    <label className="form-label text-muted small fw-bold">Dirección Completa</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      name="address"
+                      placeholder="Ej: Av. Siempreviva 742"
+                      value={shippingData.address}
+                      onChange={handleShippingChange}
+                      required
+                    />
+                  </div>
+                  <div className="col-md-6">
+                    <label className="form-label text-muted small fw-bold">Ciudad</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      name="city"
+                      placeholder="Ej: Springfield"
+                      value={shippingData.city}
+                      onChange={handleShippingChange}
+                      required
+                    />
+                  </div>
+                  <div className="col-md-3">
+                    <label className="form-label text-muted small fw-bold">CP</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      name="postalCode"
+                      placeholder="1234"
+                      value={shippingData.postalCode}
+                      onChange={handleShippingChange}
+                      required
+                    />
+                  </div>
+                  <div className="col-md-3">
+                    <label className="form-label text-muted small fw-bold">País</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      name="country"
+                      placeholder="Argentina"
+                      value={shippingData.country}
+                      onChange={handleShippingChange}
+                      required
+                    />
+                  </div>
+                </div>
+
+                {/* Sección: Datos de Pago (Simulación) */}
+                <h4 className="mb-3 text-secondary">
+                  <i className="bi bi-credit-card me-2"></i>Método de Pago
+                </h4>
+                <div className="alert alert-info border-0 d-flex align-items-center gap-2 small">
+                  <i className="bi bi-info-circle-fill"></i>
+                  <span><strong>Modo Simulación:</strong> Puedes usar datos ficticios. No se realizará ningún cargo real.</span>
+                </div>
+
+                <div className="row g-3">
+                  <div className="col-12">
+                    <label className="form-label text-muted small fw-bold">Nombre en la tarjeta</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      name="cardHolder"
+                      placeholder="Como figura en el plástico"
+                      value={paymentData.cardHolder}
+                      onChange={handlePaymentChange}
+                      required
+                    />
+                  </div>
+                  <div className="col-12">
+                    <label className="form-label text-muted small fw-bold">Número de Tarjeta</label>
+                    <div className="input-group">
+                      <span className="input-group-text bg-white border-end-0"><i className="bi bi-credit-card"></i></span>
+                      <input
+                        type="text"
+                        className="form-control border-start-0"
+                        name="cardNumber"
+                        placeholder="0000 0000 0000 0000"
+                        value={paymentData.cardNumber}
+                        onChange={handlePaymentChange}
+                        maxLength="19"
+                        required
+                      />
+                    </div>
+                  </div>
+                  <div className="col-md-6">
+                    <label className="form-label text-muted small fw-bold">Vencimiento (MM/AA)</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      name="expiry"
+                      placeholder="12/25"
+                      value={paymentData.expiry}
+                      onChange={handlePaymentChange}
+                      maxLength="5"
+                      required
+                    />
+                  </div>
+                  <div className="col-md-6">
+                    <label className="form-label text-muted small fw-bold">CVC</label>
+                    <input
+                      type="password"
+                      className="form-control"
+                      name="cvc"
+                      placeholder="123"
+                      value={paymentData.cvc}
+                      onChange={handlePaymentChange}
+                      maxLength="4"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  className="btn btn-primary btn-lg w-100 rounded-pill mt-5 fw-bold py-3 shadow-sm hover-scale transition-all"
+                  disabled={loading}
+                >
+                  {loading ? (
+                    <span><span className="spinner-border spinner-border-sm me-2"></span>Procesando...</span>
+                  ) : (
+                    `Pagar ${formatEUR(cartTotal)}`
+                  )}
+                </button>
+              </form>
             </div>
           </div>
         </div>
 
-        {/* Right Column: Order Summary */}
+        {/* Columna Derecha: Resumen (Sin cambios mayores, solo visual) */}
         <div className="col-lg-5">
           <div className="card shadow-sm border-0 rounded-4 bg-white">
             <div className="card-body p-4">
@@ -128,10 +276,7 @@ export default function Checkout() {
                   className="btn btn-sm btn-outline-danger border-0 d-flex align-items-center gap-2"
                   title="Vaciar todo el carrito"
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-trash" viewBox="0 0 16 16">
-                    <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6Z" />
-                    <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1ZM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118ZM2.5 3h11V2h-11v1Z" />
-                  </svg>
+                  <i className="bi bi-trash"></i>
                   <span className="small">Vaciar</span>
                 </button>
               </div>
