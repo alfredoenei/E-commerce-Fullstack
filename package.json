@@ -1,0 +1,8 @@
+{
+    "name": "checkout-portfolio-root",
+    "private": true,
+    "scripts": {
+        "dev": "cd checkout-portfolio-stripe && npx vercel dev",
+        "start": "npm run dev"
+    }
+}

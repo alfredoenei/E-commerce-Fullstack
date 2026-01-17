@@ -1,0 +1,92 @@
+/* Google Fonts Import */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap');
+
+:root {
+  /* Boca Juniors Palette */
+  --brand-blue: #00338D;
+  /* Azul Boca */
+  --brand-yellow: #FECB00;
+  /* Amarillo Boca */
+  --brand-dark: #1a1a1a;
+  --bg-light: #f4f6f9;
+
+  --shadow-sm: 0 1px 2px 0 rgba(0, 51, 141, 0.1);
+  --shadow-md: 0 4px 6px -1px rgba(0, 51, 141, 0.1), 0 2px 4px -1px rgba(0, 51, 141, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 51, 141, 0.1), 0 4px 6px -2px rgba(0, 51, 141, 0.05);
+}
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background-color: var(--bg-light);
+  color: var(--brand-dark);
+}
+
+/* Navbar Tweaks */
+.navbar-brand {
+  letter-spacing: -0.5px;
+  font-weight: 900 !important;
+  text-transform: uppercase;
+  font-style: italic;
+  /* Dynamic sports feel */
+}
+
+/* Featured Card Styling */
+.card {
+  border: none;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.3s ease;
+  border-radius: 12px;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-lg);
+}
+
+/* Buttons */
+.btn-primary {
+  background-color: var(--brand-blue);
+  border-color: var(--brand-blue);
+  color: var(--brand-yellow);
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.btn-primary:hover {
+  background-color: #002366;
+  border-color: #002366;
+  color: var(--brand-yellow);
+}
+
+.btn-warning {
+  background-color: var(--brand-yellow);
+  border-color: var(--brand-yellow);
+  color: var(--brand-blue);
+  font-weight: 700;
+}
+
+.btn-warning:hover {
+  background-color: #e6b800;
+  color: var(--brand-blue);
+}
+
+/* Inputs */
+.form-control:focus {
+  border-color: var(--brand-blue);
+  box-shadow: 0 0 0 0.25rem rgba(0, 51, 141, 0.25);
+}
+
+/* Text Utilities */
+.text-brand-blue {
+  color: var(--brand-blue) !important;
+}
+
+.text-brand-yellow {
+  color: var(--brand-yellow) !important;
+}
+
+/* Carousel Customization */
+.carousel-item {
+  border-radius: 0 0 20px 20px;
+  overflow: hidden;
+}
