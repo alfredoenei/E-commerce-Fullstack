@@ -1,4 +1,5 @@
 const Order = require('../models/Order');
+const Product = require('../models/Product');
 
 // @desc    Create new order
 // @route   POST /api/orders
@@ -8,18 +9,45 @@ const addOrderItems = async (req, res) => {
         orderItems,
         shippingAddress,
         paymentMethod,
-        itemsPrice,
-        taxPrice,
-        shippingPrice,
-        totalPrice,
     } = req.body;
 
     if (orderItems && orderItems.length === 0) {
-        res.status(400).json({ message: 'No order items' });
-        return;
-    } else {
+        res.status(400);
+        throw new Error('No order items');
+    }
+
+    try {
+        // Obtenemos los productos actuales de la base de datos para verificar precios
+        const itemsFromDB = await Product.find({
+            _id: { $in: orderItems.map((x) => x.product) },
+        });
+
+        // Verificamos y mapeamos los items con los precios reales de la DB
+        const dbOrderItems = orderItems.map((itemFromClient) => {
+            const productFromDB = itemsFromDB.find(
+                (itemsDB) => itemsDB._id.toString() === itemFromClient.product
+            );
+
+            if (!productFromDB) {
+                throw new Error(`Producto no encontrado: ${itemFromClient.product}`);
+            }
+
+            return {
+                ...itemFromClient,
+                product: productFromDB._id,
+                price: productFromDB.price, // Siempre usamos el precio de la DB
+                _id: undefined,
+            };
+        });
+
+        // Calculamos los subtotales en el servidor
+        const itemsPrice = dbOrderItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
+        const shippingPrice = itemsPrice > 100 ? 0 : 10;
+        const taxPrice = Number((0.15 * itemsPrice).toFixed(2));
+        const totalPrice = itemsPrice + shippingPrice + taxPrice;
+
         const order = new Order({
-            orderItems,
+            orderItems: dbOrderItems,
             user: req.user._id,
             shippingAddress,
             paymentMethod,
@@ -31,8 +59,12 @@ const addOrderItems = async (req, res) => {
 
         const createdOrder = await order.save();
         res.status(201).json(createdOrder);
+    } catch (error) {
+        res.status(400);
+        throw new Error(error.message || 'Error al procesar el pedido');
     }
 };
+
 
 // @desc    Get logged in user orders
 // @route   GET /api/orders/myorders

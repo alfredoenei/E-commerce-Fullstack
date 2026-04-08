@@ -1,6 +1,8 @@
 const express = require('express');
 const cors = require('cors');
+const helmet = require('helmet');
 const dotenv = require('dotenv');
+const { notFound, errorHandler } = require('./middlewares/errorMiddleware');
 
 // Load env vars
 // Cargar variables de entorno desde el archivo .env (vital para seguridad y configuración)
@@ -14,6 +16,8 @@ const connectDB = require('./config/db');
 connectDB();
 
 // Middleware
+// Helmet ayuda a proteger la app configurando varios encabezados HTTP de seguridad
+app.use(helmet());
 // Habilita CORS para permitir peticiones desde el Frontend (React)
 app.use(cors());
 // Permite al servidor entender y procesar JSON en las peticiones (req.body)
@@ -33,8 +37,13 @@ app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/orders', orderRoutes);
 
+// Custom Error Handling Middlewares
+app.use(notFound);
+app.use(errorHandler);
+
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
+

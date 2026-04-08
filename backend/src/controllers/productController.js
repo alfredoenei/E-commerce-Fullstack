@@ -6,8 +6,9 @@ const Product = require('../models/Product');
 // Esta función maneja la lógica para listar productos, incluyendo búsqueda por palabra clave.
 const getProducts = async (req, res) => {
     try {
-        // Si hay una palabra clave (keyword) en la URL, filtramos por nombre.
-        // Usamos $regex para buscar coincidencias parciales y $options 'i' para ignorar mayúsculas/minúsculas.
+        const pageSize = Number(req.query.pageSize) || 8;
+        const page = Number(req.query.pageNumber) || 1;
+
         const keyword = req.query.keyword
             ? {
                 name: {
@@ -17,14 +18,23 @@ const getProducts = async (req, res) => {
             }
             : {};
 
-        // Buscamos en la base de datos usando el modelo Product
-        const products = await Product.find({ ...keyword });
-        res.json(products); // Respondemos con la lista de productos en formato JSON
+        const count = await Product.countDocuments({ ...keyword });
+        const products = await Product.find({ ...keyword })
+            .limit(pageSize)
+            .skip(pageSize * (page - 1));
+
+        res.json({
+            products,
+            page,
+            pages: Math.ceil(count / pageSize),
+            totalProducts: count,
+        });
     } catch (error) {
         console.error("Error al obtener productos:", error);
         res.status(500).json({ message: 'Error del Servidor' });
     }
 };
+
 
 // @desc    Fetch single product
 // @route   GET /api/products/:id

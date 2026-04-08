@@ -12,25 +12,51 @@ import AdminLayout from "./features/admin/AdminLayout";
 import ProductListAdmin from "./features/admin/ProductListAdmin";
 import OrderListAdmin from "./features/admin/OrderListAdmin";
 import Footer from "./components/Footer";
+import ProtectedRoute from "./components/ProtectedRoute";
+import { Toaster } from "react-hot-toast";
+import WishlistPage from "./pages/WishlistPage";
+
 
 function App() {
   return (
     <div className="d-flex flex-column min-vh-100 bg-light">
+      <Toaster position="top-right" reverseOrder={false} />
       <Navbar />
 
-      <main className="flex-grow-1">
+
+      <main className="flex-grow-1" style={{ paddingTop: '95px' }}>
+
+
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/products" element={<ProductList />} />
           <Route path="/products/:id" element={<ProductDetail />} />
           <Route path="/checkout" element={<Checkout />} />
-          <Route path="/success" element={<Success />} />
-          <Route path="/profile" element={<ProfilePage />} />
+          
+          <Route path="/success" element={
+            <ProtectedRoute>
+              <Success />
+            </ProtectedRoute>
+          } />
+          
+          <Route path="/profile" element={
+            <ProtectedRoute>
+              <ProfilePage />
+            </ProtectedRoute>
+          } />
+
+          <Route path="/wishlist" element={<WishlistPage />} />
+          
           <Route path="/login" element={<LoginPage />} />
+
           <Route path="/register" element={<RegisterPage />} />
 
           {/* Admin Routes */}
-          <Route path="/admin" element={<AdminLayout />}>
+          <Route path="/admin" element={
+            <ProtectedRoute adminOnly={true}>
+              <AdminLayout />
+            </ProtectedRoute>
+          }>
             <Route path="products" element={<ProductListAdmin />} />
             <Route path="orders" element={<OrderListAdmin />} />
           </Route>
@@ -45,3 +71,4 @@ function App() {
 }
 
 export default App;
+

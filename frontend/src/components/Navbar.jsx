@@ -2,6 +2,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const Navbar = () => {
     const { user, logout } = useAuth();
@@ -16,96 +17,118 @@ const Navbar = () => {
         }
     };
 
+    const cartCount = cartItems.reduce((acc, item) => acc + item.quantity, 0);
+
     return (
-        <nav className="navbar navbar-expand-lg sticky-top shadow-lg" style={{ backgroundColor: '#001f3f', zIndex: 1000 }}>
+        <nav className="navbar navbar-expand-lg fixed-top shadow-sm">
             <div className="container">
                 {/* Brand */}
-                <Link className="navbar-brand me-4 d-flex align-items-center" to="/">
-                    <span className="fs-3 fw-bold fst-italic" style={{ color: '#FECB00', letterSpacing: '-1px' }}>MARKET ALFREDO</span>
-                </Link>
+                <motion.div
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.5 }}
+                >
+                    <Link className="navbar-brand d-flex align-items-center" to="/">
+                        <div className="d-flex flex-column">
+                            <span className="fs-4 lh-1">MARKET</span>
+                            <span className="fs-5 lh-1 text-primary">ALFREDO</span>
+                        </div>
+                    </Link>
+                </motion.div>
 
                 {/* Mobile Toggle */}
-                <button className="navbar-toggler border-0 text-warning" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
-                    <i className="bi bi-list fs-1"></i>
+                <button className="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+                    <span className="navbar-toggler-icon"></span>
                 </button>
 
                 {/* Navbar Content */}
                 <div className="collapse navbar-collapse" id="navbarContent">
-
                     {/* Centered Search Bar */}
-                    <form onSubmit={handleSearch} className="d-flex mx-auto my-3 my-lg-0" style={{ maxWidth: '600px', width: '100%' }}>
-                        <div className="input-group">
+                    <form onSubmit={handleSearch} className="d-flex mx-auto my-3 my-lg-0" style={{ maxWidth: '400px', width: '100%' }}>
+                        <div className="input-group bg-light rounded-1 border overflow-hidden">
                             <input
-                                className="form-control border-0 rounded-start-pill ps-4"
+                                className="form-control border-0 ps-3 bg-transparent small"
                                 type="search"
-                                placeholder="Buscar camisetas, botines..."
+                                placeholder="BUSCAR EQUIPAMIENTO..."
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
-                                style={{ height: '45px' }}
+                                style={{ height: '40px', fontSize: '0.85rem', letterSpacing: '0.5px' }}
                             />
-                            <button className="btn btn-warning border-0 rounded-end-pill px-4" type="submit">
-                                <i className="bi bi-search text-primary"></i>
+                            <button className="btn btn-link text-muted p-2" type="submit">
+                                <i className="bi bi-search"></i>
                             </button>
                         </div>
                     </form>
 
                     {/* Actions */}
-                    <ul className="navbar-nav ms-auto align-items-center gap-3">
-
-                        {/* Social Icons */}
-                        <li className="nav-item d-none d-lg-flex gap-2 me-2 border-end pe-3 border-secondary">
-                            <a href="https://instagram.com" target="_blank" rel="noreferrer" className="text-white-50 hover-yellow"><i className="bi bi-instagram fs-5"></i></a>
-                            <a href="https://linkedin.com" target="_blank" rel="noreferrer" className="text-white-50 hover-yellow"><i className="bi bi-linkedin fs-5"></i></a>
-                            <a href="https://github.com" target="_blank" rel="noreferrer" className="text-white-50 hover-yellow"><i className="bi bi-github fs-5"></i></a>
-                        </li>
-
-                        {/* Admin Link (Discreet) */}
+                    <ul className="navbar-nav ms-auto align-items-center gap-4">
+                        {/* Admin Link */}
                         {user?.role === 'admin' && (
                             <li className="nav-item">
-                                <Link to="/admin/products" className="text-warning text-decoration-none fw-bold small text-uppercase">
-                                    <i className="bi bi-shield-lock me-1"></i> Panel
+                                <Link to="/admin/products" className="nav-link small text-uppercase fw-bold">
+                                    Admin
                                 </Link>
                             </li>
                         )}
 
-                        {/* User User */}
+                        {/* User Actions */}
                         {user ? (
                             <li className="nav-item dropdown">
-                                <a className="nav-link dropdown-toggle text-white d-flex align-items-center gap-2" href="#" role="button" data-bs-toggle="dropdown">
-                                    <div className="bg-warning text-primary rounded-circle d-flex align-items-center justify-content-center fw-bold" style={{ width: '35px', height: '35px' }}>
+                                <a className="nav-link dropdown-toggle d-flex align-items-center gap-2" href="#" role="button" data-bs-toggle="dropdown">
+                                    <div className="bg-dark text-white rounded-1 d-flex align-items-center justify-content-center" style={{ width: '32px', height: '32px', fontSize: '0.8rem' }}>
                                         {user.username.charAt(0).toUpperCase()}
                                     </div>
-                                    <span className="d-none d-lg-block">{user.username}</span>
+                                    <span className="d-none d-lg-block small text-uppercase">{user.username}</span>
                                 </a>
-                                <ul className="dropdown-menu dropdown-menu-end shadow-lg border-0 rounded-3 mt-2">
-                                    <li><Link className="dropdown-item py-2" to="/profile"><i className="bi bi-bag me-2"></i> Mis Compras</Link></li>
+                                <ul className="dropdown-menu dropdown-menu-end shadow border-0 rounded-0 p-2 mt-2">
+                                    <li><Link className="dropdown-item small text-uppercase py-2" to="/profile">Mis Pedidos</Link></li>
                                     <li><hr className="dropdown-divider" /></li>
-                                    <li><button className="dropdown-item py-2 text-danger" onClick={logout}><i className="bi bi-box-arrow-right me-2"></i> Salir</button></li>
+                                    <li><button className="dropdown-item small text-uppercase py-2 text-danger" onClick={logout}>Salir</button></li>
                                 </ul>
                             </li>
                         ) : (
-                            <li className="nav-item d-flex gap-2">
-                                <Link className="btn btn-outline-light rounded-pill px-4 btn-sm" to="/login">Ingresá</Link>
-                                <Link className="btn btn-warning rounded-pill px-4 btn-sm fw-bold text-primary" to="/register">Creá tu cuenta</Link>
+                            <li className="nav-item d-flex gap-3">
+                                <Link className="nav-link nav-link-custom small text-uppercase" to="/login">LOGIN</Link>
+                                <Link className="btn btn-primary btn-sm px-4" to="/register">UNIRME</Link>
                             </li>
                         )}
 
-                        {/* Cart */}
-                        <li className="nav-item">
-                            <Link to="/checkout" className="btn position-relative text-white border-0">
-                                <i className="bi bi-cart3 fs-4"></i>
-                                {cartItems.length > 0 && (
-                                    <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning text-primary border border-primary">
-                                        {cartItems.length}
-                                    </span>
-                                )}
-                            </Link>
-                        </li>
+                        {/* Icons */}
+                        <div className="d-flex align-items-center gap-2">
+                             <li className="nav-item">
+                                <Link to="/wishlist" className="nav-link p-2">
+                                    <i className="bi bi-heart fs-5"></i>
+                                </Link>
+                            </li>
+
+                            <li className="nav-item">
+                                <Link to="/checkout" className="nav-link p-2">
+                                    <div className="position-relative">
+                                        <i className="bi bi-cart3 fs-5"></i>
+                                        <AnimatePresence>
+                                            {cartCount > 0 && (
+                                                <motion.span
+                                                    initial={{ scale: 0 }}
+                                                    animate={{ scale: 1 }}
+                                                    exit={{ scale: 0 }}
+                                                    className="position-absolute top-0 start-100 translate-middle badge rounded-circle bg-primary border border-white"
+                                                    style={{ padding: '0.35em 0.5em', fontSize: '0.6rem' }}
+                                                >
+                                                    {cartCount}
+                                                </motion.span>
+                                            )}
+                                        </AnimatePresence>
+                                    </div>
+                                </Link>
+                            </li>
+                        </div>
                     </ul>
                 </div>
             </div>
         </nav>
+
     );
 };
 
 export default Navbar;
+

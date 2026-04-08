@@ -1,92 +1,143 @@
 /* Google Fonts Import */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&family=Outfit:wght@300;400;600;700&display=swap');
 
 :root {
-  /* Boca Juniors Palette */
-  --brand-blue: #00338D;
-  /* Azul Boca */
-  --brand-yellow: #FECB00;
-  /* Amarillo Boca */
-  --brand-dark: #1a1a1a;
-  --bg-light: #f4f6f9;
-
-  --shadow-sm: 0 1px 2px 0 rgba(0, 51, 141, 0.1);
-  --shadow-md: 0 4px 6px -1px rgba(0, 51, 141, 0.1), 0 2px 4px -1px rgba(0, 51, 141, 0.06);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 51, 141, 0.1), 0 4px 6px -2px rgba(0, 51, 141, 0.05);
+  /* Brand Palette - Deep Sport Navy & Dynamic Gold */
+  --brand-blue: #002D72;
+  --brand-blue-dark: #001029;
+  --brand-yellow: #FFC700;
+  --brand-yellow-light: #FFE066;
+  --brand-dark: #0A0F1A;
+  --brand-accent: #0055FF;
+  
+  --bg-light: #F8FAFC;
+  --bg-white: #FFFFFF;
+  
+  /* Sombreados Estructurales */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
 }
 
 body {
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-family: 'Outfit', 'Inter', system-ui, -apple-system, sans-serif;
   background-color: var(--bg-light);
   color: var(--brand-dark);
 }
 
-/* Navbar Tweaks */
-.navbar-brand {
-  letter-spacing: -0.5px;
-  font-weight: 900 !important;
-  text-transform: uppercase;
-  font-style: italic;
-  /* Dynamic sports feel */
+/* Navbar Estilizada y Profesional */
+.navbar {
+  background-color: var(--bg-white) !important;
+  border-bottom: 2px solid #F1F5F9;
+  z-index: 1050 !important;
+  padding: 0.8rem 0;
 }
 
-/* Featured Card Styling */
+.navbar-brand {
+  letter-spacing: 1px;
+  font-weight: 900 !important;
+  text-transform: uppercase;
+  font-family: 'Outfit', sans-serif;
+  color: var(--brand-blue-dark) !important;
+  border-left: 4px solid var(--brand-yellow);
+  padding-left: 12px;
+}
+
+.nav-link {
+  font-weight: 600;
+  color: var(--brand-blue-dark) !important;
+  position: relative;
+  transition: color 0.3s ease;
+}
+
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: var(--brand-accent);
+  transition: width 0.3s ease;
+}
+
+.nav-link:hover::after {
+  width: 100%;
+}
+
+/* Botones con Energía */
+.btn {
+  border-radius: 4px; /* Bordes más rectos para look más técnico */
+  padding: 0.75rem 1.8rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.btn-primary {
+  background: var(--brand-blue);
+  border: none;
+  color: #fff;
+}
+
+.btn-primary:hover {
+  background: var(--brand-accent);
+  transform: scale(1.02);
+  box-shadow: 0 8px 15px rgba(0, 85, 255, 0.3);
+}
+
+.btn-outline-light {
+  border: 2px solid rgba(255,255,255,0.8);
+  color: #fff;
+  background: transparent;
+}
+
+.btn-outline-light:hover {
+  background: #fff;
+  color: var(--brand-blue-dark);
+  border-color: #fff;
+}
+
+/* Cards de Alto Rendimiento */
 .card {
   border: none;
-  box-shadow: var(--shadow-sm);
-  transition: all 0.3s ease;
-  border-radius: 12px;
+  border-radius: 4px;
+  background: #fff;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+  transition: transform 0.3s ease;
 }
 
 .card:hover {
   transform: translateY(-5px);
-  box-shadow: var(--shadow-lg);
+  box-shadow: 0 15px 30px rgba(0,0,0,0.08);
 }
 
-/* Buttons */
-.btn-primary {
-  background-color: var(--brand-blue);
-  border-color: var(--brand-blue);
-  color: var(--brand-yellow);
-  font-weight: 700;
+.badge {
   text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 1px;
+  border-radius: 2px;
 }
 
-.btn-primary:hover {
-  background-color: #002366;
-  border-color: #002366;
-  color: var(--brand-yellow);
-}
-
-.btn-warning {
-  background-color: var(--brand-yellow);
-  border-color: var(--brand-yellow);
-  color: var(--brand-blue);
-  font-weight: 700;
-}
-
-.btn-warning:hover {
-  background-color: #e6b800;
-  color: var(--brand-blue);
-}
-
-/* Inputs */
-.form-control:focus {
-  border-color: var(--brand-blue);
-  box-shadow: 0 0 0 0.25rem rgba(0, 51, 141, 0.25);
-}
-
-/* Text Utilities */
-.text-brand-blue {
-  color: var(--brand-blue) !important;
-}
-
-.text-brand-yellow {
-  color: var(--brand-yellow) !important;
-}
-
-/* Carousel Customization */
-.carousel-item {
-  border-radius: 0 0 20px 20px;
+/* Hero Section Sport Premium */
+.hero-sport-premium {
+  background-color: #001029 !important;
+  position: relative;
   overflow: hidden;
+  margin-bottom: 3rem;
+  height: 650px;
 }
+
+.hero-gradient-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at 10% 20%, rgba(0, 85, 255, 0.2) 0%, transparent 40%), 
+              radial-gradient(circle at 90% 80%, rgba(255, 199, 0, 0.08) 0%, transparent 40%);
+  z-index: 1;
+}
+
+
