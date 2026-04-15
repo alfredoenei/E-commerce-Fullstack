@@ -144,7 +144,7 @@ const Home = () => {
                 </motion.div>
 
                 {/* Featured Products */}
-                <div className="d-flex justify-content-between align-items-end mb-5">
+                <div className="d-flex justify-content-between align-items-end mb-5 mt-5 pt-4">
                     <div>
                         <h2 className="display-5 fw-bold mb-0">Lo más buscado</h2>
                         <p className="text-muted fs-5">Basado en las tendencias de esta semana</p>

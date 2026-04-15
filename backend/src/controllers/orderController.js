@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const Order = require('../models/Order');
 const Product = require('../models/Product');
 
@@ -12,17 +13,19 @@ const addOrderItems = async (req, res) => {
     } = req.body;
 
     if (orderItems && orderItems.length === 0) {
-        res.status(400);
-        throw new Error('No order items');
+        return res.status(400).json({ message: 'No order items' });
     }
 
+    const session = await mongoose.startSession();
+    session.startTransaction();
+
     try {
-        // Obtenemos los productos actuales de la base de datos para verificar precios
+        // Obtenemos los productos atados a la sesión de transacción
         const itemsFromDB = await Product.find({
             _id: { $in: orderItems.map((x) => x.product) },
-        });
+        }).session(session);
 
-        // Verificamos y mapeamos los items con los precios reales de la DB
+        // Verificamos y mapeamos los items con los precios y stock real
         const dbOrderItems = orderItems.map((itemFromClient) => {
             const productFromDB = itemsFromDB.find(
                 (itemsDB) => itemsDB._id.toString() === itemFromClient.product
@@ -32,15 +35,32 @@ const addOrderItems = async (req, res) => {
                 throw new Error(`Producto no encontrado: ${itemFromClient.product}`);
             }
 
+            const safeQuantity = Math.max(1, Number(itemFromClient.qty || itemFromClient.quantity || 1));
+
+            // Validación Atómica de Stock En Tiempo Real
+            if (productFromDB.countInStock < safeQuantity) {
+                throw new Error(`Stock insuficiente para el producto: ${productFromDB.name}`);
+            }
+
+            // Reducimos en la instancia del producto (luego hacemos save)
+            productFromDB.countInStock -= safeQuantity;
+
             return {
                 ...itemFromClient,
                 product: productFromDB._id,
-                price: productFromDB.price, // Siempre usamos el precio de la DB
+                price: productFromDB.price,
+                qty: safeQuantity,
+                quantity: safeQuantity,
                 _id: undefined,
             };
         });
 
-        // Calculamos los subtotales en el servidor
+        // Guardar todos los productos con el stock restado dentro de la transacción
+        for (const product of itemsFromDB) {
+            await product.save({ session });
+        }
+
+        // Calculamos previsiones financieras
         const itemsPrice = dbOrderItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
         const shippingPrice = itemsPrice > 100 ? 0 : 10;
         const taxPrice = Number((0.15 * itemsPrice).toFixed(2));
@@ -57,11 +77,17 @@ const addOrderItems = async (req, res) => {
             totalPrice,
         });
 
-        const createdOrder = await order.save();
-        res.status(201).json(createdOrder);
+        // Guardado de la Orden ligado a la transacción
+        const createdOrder = await order.save({ session });
+
+        await session.commitTransaction();
+        session.endSession();
+
+        return res.status(201).json(createdOrder);
     } catch (error) {
-        res.status(400);
-        throw new Error(error.message || 'Error al procesar el pedido');
+        await session.abortTransaction();
+        session.endSession();
+        return res.status(400).json({ message: error.message || 'Error al procesar el pedido' });
     }
 };
 

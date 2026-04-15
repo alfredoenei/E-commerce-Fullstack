@@ -102,15 +102,16 @@ body {
 /* Cards de Alto Rendimiento */
 .card {
   border: none;
-  border-radius: 4px;
+  border-radius: 8px;
   background: #fff;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.02);
-  transition: transform 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  overflow: hidden;
 }
 
 .card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 15px 30px rgba(0,0,0,0.08);
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.08); /* Sombra difusa premium */
 }
 
 .badge {
@@ -122,11 +123,13 @@ body {
 
 /* Hero Section Sport Premium */
 .hero-sport-premium {
-  background-color: #001029 !important;
+  background: linear-gradient(135deg, var(--brand-blue-dark) 0%, #001f4d 100%) !important;
   position: relative;
   overflow: hidden;
-  margin-bottom: 3rem;
-  height: 650px;
+  margin-bottom: 5rem;
+  height: 70vh;
+  min-height: 600px;
+  max-height: 850px;
 }
 
 .hero-gradient-overlay {
@@ -135,9 +138,49 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
-  background: radial-gradient(circle at 10% 20%, rgba(0, 85, 255, 0.2) 0%, transparent 40%), 
-              radial-gradient(circle at 90% 80%, rgba(255, 199, 0, 0.08) 0%, transparent 40%);
+  background: radial-gradient(circle at 15% 20%, rgba(0, 85, 255, 0.3) 0%, transparent 45%), 
+              radial-gradient(circle at 85% 80%, rgba(255, 199, 0, 0.12) 0%, transparent 45%);
   z-index: 1;
 }
+
+/* Efecto cristal refinado */
+.glass-effect {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/* Transiciones de Elevación */
+.hover-scale {
+  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.hover-scale:hover {
+  transform: scale(1.02);
+}
+
+/* Utilidades Tipográficas */
+.ls-1 { letter-spacing: 1px; }
+
+/* Refinamiento de Inputs */
+.form-control:focus {
+  border-color: var(--brand-accent);
+  box-shadow: 0 0 0 4px rgba(0, 85, 255, 0.1);
+  background-color: #fff;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border-radius: 10px;
+}
+
 
 

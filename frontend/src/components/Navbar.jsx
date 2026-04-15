@@ -20,7 +20,7 @@ const Navbar = () => {
     const cartCount = cartItems.reduce((acc, item) => acc + item.quantity, 0);
 
     return (
-        <nav className="navbar navbar-expand-lg fixed-top shadow-sm">
+        <nav className="navbar navbar-expand-lg fixed-top shadow-sm bg-white py-3">
             <div className="container">
                 {/* Brand */}
                 <motion.div
@@ -30,8 +30,8 @@ const Navbar = () => {
                 >
                     <Link className="navbar-brand d-flex align-items-center" to="/">
                         <div className="d-flex flex-column">
-                            <span className="fs-4 lh-1">MARKET</span>
-                            <span className="fs-5 lh-1 text-primary">ALFREDO</span>
+                            <span className="fs-4 lh-1 fw-black">MARKET</span>
+                            <span className="fs-5 lh-1 text-primary fw-bold">ALFREDO</span>
                         </div>
                     </Link>
                 </motion.div>
@@ -44,15 +44,15 @@ const Navbar = () => {
                 {/* Navbar Content */}
                 <div className="collapse navbar-collapse" id="navbarContent">
                     {/* Centered Search Bar */}
-                    <form onSubmit={handleSearch} className="d-flex mx-auto my-3 my-lg-0" style={{ maxWidth: '400px', width: '100%' }}>
-                        <div className="input-group bg-light rounded-1 border overflow-hidden">
+                    <form onSubmit={handleSearch} className="d-flex mx-auto my-3 my-lg-0 px-lg-3" style={{ maxWidth: '500px', width: '100%' }}>
+                        <div className="input-group bg-light rounded-pill border-0 px-2 shadow-none" style={{ transition: 'all 0.3s' }}>
                             <input
                                 className="form-control border-0 ps-3 bg-transparent small"
                                 type="search"
                                 placeholder="BUSCAR EQUIPAMIENTO..."
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
-                                style={{ height: '40px', fontSize: '0.85rem', letterSpacing: '0.5px' }}
+                                style={{ height: '45px', fontSize: '0.85rem', letterSpacing: '0.5px' }}
                             />
                             <button className="btn btn-link text-muted p-2" type="submit">
                                 <i className="bi bi-search"></i>
@@ -75,21 +75,21 @@ const Navbar = () => {
                         {user ? (
                             <li className="nav-item dropdown">
                                 <a className="nav-link dropdown-toggle d-flex align-items-center gap-2" href="#" role="button" data-bs-toggle="dropdown">
-                                    <div className="bg-dark text-white rounded-1 d-flex align-items-center justify-content-center" style={{ width: '32px', height: '32px', fontSize: '0.8rem' }}>
+                                    <div className="bg-dark text-white rounded-circle d-flex align-items-center justify-content-center border border-light shadow-sm" style={{ width: '36px', height: '36px', fontSize: '0.85rem' }}>
                                         {user.username.charAt(0).toUpperCase()}
                                     </div>
-                                    <span className="d-none d-lg-block small text-uppercase">{user.username}</span>
+                                    <span className="d-none d-lg-block small text-uppercase fw-bold">{user.username}</span>
                                 </a>
-                                <ul className="dropdown-menu dropdown-menu-end shadow border-0 rounded-0 p-2 mt-2">
+                                <ul className="dropdown-menu dropdown-menu-end shadow-lg border-0 rounded-3 p-2 mt-2">
                                     <li><Link className="dropdown-item small text-uppercase py-2" to="/profile">Mis Pedidos</Link></li>
                                     <li><hr className="dropdown-divider" /></li>
                                     <li><button className="dropdown-item small text-uppercase py-2 text-danger" onClick={logout}>Salir</button></li>
                                 </ul>
                             </li>
                         ) : (
-                            <li className="nav-item d-flex gap-3">
-                                <Link className="nav-link nav-link-custom small text-uppercase" to="/login">LOGIN</Link>
-                                <Link className="btn btn-primary btn-sm px-4" to="/register">UNIRME</Link>
+                            <li className="nav-item d-flex align-items-center gap-3">
+                                <Link className="nav-link nav-link-custom small text-uppercase fw-bold" to="/login">LOGIN</Link>
+                                <Link className="btn btn-primary px-4 py-2 rounded-pill fw-bold shadow-sm" style={{ fontSize: '0.8rem' }} to="/register">UNIRME</Link>
                             </li>
                         )}
 
